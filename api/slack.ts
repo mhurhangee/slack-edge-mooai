@@ -14,7 +14,7 @@ const app = new SlackApp({
   env: {
     SLACK_SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET!,
     SLACK_BOT_TOKEN: process.env.SLACK_BOT_TOKEN!,
-    SLACK_LOGGING_LEVEL: 'DEBUG'
+    SLACK_LOGGING_LEVEL: 'ERROR'
   }
 })
 
@@ -33,14 +33,13 @@ app.assistant(
       await setStatus({ status: 'is typing...' })
 
       // Retrieve message history
-      const { messages } = await client.conversations.replies({
+      const thread = await client.conversations.replies({
         channel: payload.channel,
         ts: payload.ts,
         oldest: payload.ts,
-        limit: 10
       })
 
-      console.log(messages)
+      console.log('🧵 thread:', thread)
 
       // Generate response
       const { text } = await generateText({

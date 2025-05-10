@@ -36,8 +36,6 @@ app.assistant(
       const thread = await client.conversations.replies({
         channel: payload.channel,
         ts: payload.thread_ts || payload.ts,
-        oldest: payload.thread_ts || payload.ts,
-        latest: payload.ts
       })
 
       // System prompt definition

@@ -28,14 +28,30 @@ app.assistant(
         prompts: ['Brainstorm a new project', 'Ideas to cut my carbon footprint', 'What flowers are in season?']
       })
     },
-    userMessage: async ({ payload, context: { setStatus, setTitle, say } }) => {
+    userMessage: async ({ payload, context: { client, setStatus, setTitle, say } }) => {
+      // Set assistant status in bottom bar
       await setStatus({ status: 'is typing...' })
+
+      // Retrieve message history
+      const { messages } = await client.conversations.replies({
+        channel: payload.channel,
+        ts: payload.ts,
+        limit: 10
+      })
+
+      console.log(messages)
+
+      // Generate response
       const { text } = await generateText({
         model: openai('gpt-4.1-mini'),
-        system: '- You are a helpful assistant who is an expert on the environment, climate change and regenerative agriculture.',
+        system: '- You are a helpful assistant who is an expert on the environment, climate change and regenerative agriculture.\n- Format your responses with markdown and emojis.',
         prompt: payload.text
       })
+
+      // Set message history title
       await setTitle({ title: text })
+
+      // Send response
       await say({ text })
     }
   })

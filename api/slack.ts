@@ -36,6 +36,7 @@ app.assistant(
       const { messages } = await client.conversations.replies({
         channel: payload.channel,
         ts: payload.ts,
+        oldest: payload.ts,
         limit: 10
       })
 

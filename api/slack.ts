@@ -65,12 +65,18 @@ app.assistant(
 
       // Map all messages in the thread to the appropriate format
       const threadHistory = sortedMessages.map(message => {
-        // Determine if message is from bot/assistant or user
-        const role = message.bot_id ? 'assistant' : 'user';
+        // Determine role based on message properties
+        let role = 'user';
+        
+        // Check for bot messages or messages with assistant subtypes
+        if (message.bot_id || message.type === 'bot_message' || message.type === 'assistant_app_thread' || message.assistant_app_thread) {
+          role = 'assistant';
+        }
+        
         return {
           role,
           content: message.text || '',
-          // Include timestamp for debugging
+          // Include minimal metadata for debugging
           ts: message.ts
         };
       });

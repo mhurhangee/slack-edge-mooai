@@ -35,31 +35,53 @@ app.assistant(
       // Retrieve message history
       const thread = await client.conversations.replies({
         channel: payload.channel,
-        ts: payload.thread_ts || payload.ts
+        ts: payload.thread_ts || payload.ts,
+        oldest: payload.thread_ts || payload.ts,
+        latest: payload.ts
       })
 
       // System prompt definition
       const systemPrompt = '- You are a helpful assistant who is an expert on the environment, climate change and regenerative agriculture.\n- Format your responses with markdown and emojis.';
-      
+
       // Extract the current user message
       const currentUserMessage = payload.text || '';
-      
+
       // Map thread messages to the format requested (similar to what would be sent to AI SDK)
       const systemMessage = { role: 'system', content: systemPrompt };
-      
+
+      // First, log the raw thread messages with timestamps for debugging
+      console.log('🧵 Raw thread messages:', thread.messages?.map(m => ({
+        ts: m.ts,
+        text: m.text,
+        bot_id: m.bot_id ? true : false,
+        user: m.user
+      })));
+
+      // Sort messages by timestamp to ensure correct chronological order
+      const sortedMessages = [...(thread.messages || [])].sort((a, b) => {
+        const tsA = parseFloat(a.ts || '0');
+        const tsB = parseFloat(b.ts || '0');
+        return tsA - tsB;
+      });
+
       // Map all messages in the thread to the appropriate format
-      const threadHistory = thread.messages?.map(message => {
+      const threadHistory = sortedMessages.map(message => {
         // Determine if message is from bot/assistant or user
         const role = message.bot_id ? 'assistant' : 'user';
-        return { role, content: message.text || '' };
-      }) || [];
-      
+        return {
+          role,
+          content: message.text || '',
+          // Include timestamp for debugging
+          ts: message.ts
+        };
+      });
+
       // Combine all messages in the correct order
       const formattedMessages = [systemMessage, ...threadHistory];
-      
+
       // Log the formatted conversation for debugging
-      console.log('💬 Conversation context:', JSON.stringify(formattedMessages, null, 2));
-      
+      console.log('💬 Conversation context (sorted by timestamp):', JSON.stringify(formattedMessages, null, 2));
+
       // Generate response with just the current message as prompt
       // Note: We're not using the mapped messages with the AI SDK due to type constraints
       const { text } = await generateText({

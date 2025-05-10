@@ -35,8 +35,7 @@ app.assistant(
       // Retrieve message history
       const thread = await client.conversations.replies({
         channel: payload.channel,
-        ts: payload.ts,
-        oldest: payload.ts,
+        ts: payload.ts
       })
 
       console.log('🧵 thread:', thread)

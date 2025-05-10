@@ -35,16 +35,37 @@ app.assistant(
       // Retrieve message history
       const thread = await client.conversations.replies({
         channel: payload.channel,
-        ts: payload.thread_ts!
+        ts: payload.thread_ts || payload.ts
       })
 
-      console.log('🧵 thread:', thread)
-
-      // Generate response
+      // System prompt definition
+      const systemPrompt = '- You are a helpful assistant who is an expert on the environment, climate change and regenerative agriculture.\n- Format your responses with markdown and emojis.';
+      
+      // Extract the current user message
+      const currentUserMessage = payload.text || '';
+      
+      // Map thread messages to the format requested (similar to what would be sent to AI SDK)
+      const systemMessage = { role: 'system', content: systemPrompt };
+      
+      // Map all messages in the thread to the appropriate format
+      const threadHistory = thread.messages?.map(message => {
+        // Determine if message is from bot/assistant or user
+        const role = message.bot_id ? 'assistant' : 'user';
+        return { role, content: message.text || '' };
+      }) || [];
+      
+      // Combine all messages in the correct order
+      const formattedMessages = [systemMessage, ...threadHistory];
+      
+      // Log the formatted conversation for debugging
+      console.log('💬 Conversation context:', JSON.stringify(formattedMessages, null, 2));
+      
+      // Generate response with just the current message as prompt
+      // Note: We're not using the mapped messages with the AI SDK due to type constraints
       const { text } = await generateText({
         model: openai('gpt-4.1-mini'),
-        system: '- You are a helpful assistant who is an expert on the environment, climate change and regenerative agriculture.\n- Format your responses with markdown and emojis.',
-        prompt: payload.text
+        system: systemPrompt,
+        prompt: currentUserMessage
       })
 
       // Set message history title

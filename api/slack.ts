@@ -1,6 +1,6 @@
 // api/slack.ts
 import { SlackApp, Assistant } from 'slack-edge'
-import { waitUntil } from '@vercel/functions';
+import { waitUntil } from '@vercel/functions'
 
 // Edge Runtime
 export const config = {
@@ -20,17 +20,17 @@ const app = new SlackApp({
 app.assistant(
   new Assistant({
     threadStarted: async ({ context: { say, setSuggestedPrompts } }) => {
-      await say({ text: "Hi, how can I help you today?" });
+      await say({ text: 'Hi, how can I help you today?' })
       await setSuggestedPrompts({
-        prompts: ["What does SLACK stand for?"],
-      });
+        prompts: ['What does SLACK stand for?']
+      })
     },
     userMessage: async ({ context: { setStatus, say } }) => {
-      await setStatus({ status: "is typing..." });
-      await say({ text: "Here you are!" });
-    },
-   }),
-);
+      await setStatus({ status: 'is typing...' })
+      await say({ text: 'Here you are!' })
+    }
+  })
+)
 
 // Create Slash Command
 app.command('/moo-hello', async (req) => {

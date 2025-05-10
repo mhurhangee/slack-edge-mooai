@@ -1,0 +1,54 @@
+{
+    "display_information": {
+        "name": "MooAI",
+        "description": "Eco AI helper",
+        "background_color": "#590088"
+    },
+    "features": {
+        "app_home": {
+            "home_tab_enabled": false,
+            "messages_tab_enabled": true,
+            "messages_tab_read_only_enabled": false
+        },
+        "bot_user": {
+            "display_name": "MooAI",
+            "always_online": false
+        },
+        "slash_commands": [
+            {
+                "command": "/moo-hello",
+                "url": "https://slack-edge-mooai.vercel.app/api/slack",
+                "description": "Moooo",
+                "usage_hint": "(for testing purposes)",
+                "should_escape": false
+            }
+        ],
+        "assistant_view": {
+            "assistant_description": "Talk to me",
+            "suggested_prompts": []
+        }
+    },
+    "oauth_config": {
+        "scopes": {
+            "bot": [
+                "assistant:write",
+                "commands",
+                "chat:write",
+                "im:history"
+            ]
+        }
+    },
+    "settings": {
+        "event_subscriptions": {
+            "request_url": "https://slack-edge-mooai.vercel.app/api/slack",
+            "bot_events": [
+                "assistant_thread_context_changed",
+                "assistant_thread_started",
+                "message.im"
+            ]
+        },
+        "org_deploy_enabled": false,
+        "socket_mode_enabled": false,
+        "token_rotation_enabled": false
+    }
+}

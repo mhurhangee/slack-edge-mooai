@@ -1,14 +1,14 @@
 {
-    "redirects": [
-      {
-        "source": "/",
-        "destination": "https://github.com/mhurhangee/slack-edge-mooai"
-      }
-    ],
-    "functions": {
-      "api/slack.ts": {
-        "maxDuration": 60
-      }
-    },
-    "outputDirectory": "dist"
-  }
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://github.com/mhurhangee/slack-edge-mooai"
+    }
+  ],
+  "functions": {
+    "api/slack.ts": {
+      "maxDuration": 60
+    }
+  },
+  "outputDirectory": "dist"
+}
